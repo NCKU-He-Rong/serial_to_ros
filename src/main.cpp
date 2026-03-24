@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     // Load parameters from yaml
     std::string port;
-    int baud_rate, timeout_ms;
+    int baud_rate, timeout_ms, loop_rate_hz;
     std::string frame_id, topic;
 
     nh.param<std::string>("serial/port", port, "/dev/ttyACM0");
@@ -43,13 +43,12 @@ int main(int argc, char **argv)
 
     ROS_INFO("Serial port %s opened (baud: %d)", port.c_str(), baud_rate);
 
+    ros::Rate rate(loop_rate_hz);
     std::string buffer;
 
     while (ros::ok()) {
-        // readline: blocks until '\n' or timeout, no artificial sleep
-        std::string chunk = ser.readline(65536, "\n");
-        if (!chunk.empty()) {
-            buffer += chunk;
+        if (ser.available()) {
+            buffer += ser.read(ser.available());
 
             size_t pos;
             while ((pos = buffer.find('\n')) != std::string::npos) {
@@ -90,6 +89,7 @@ int main(int argc, char **argv)
         }
 
         ros::spinOnce();
+        rate.sleep();
     }
 
     ser.close();
