@@ -1,0 +1,8 @@
+serial:
+  port: "/dev/ttyACM0"
+  baud_rate: 115200
+  timeout_ms: 1000
+
+imu:
+  frame_id: "imu_link"
+  topic: "imu/data_raw"
