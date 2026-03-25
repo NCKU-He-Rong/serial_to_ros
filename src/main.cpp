@@ -19,6 +19,8 @@ int main(int argc, char **argv)
     nh.param<int>("serial/timeout_ms", timeout_ms, 1000);
     nh.param<std::string>("imu/frame_id", frame_id, "imu_link");
     nh.param<std::string>("imu/topic", topic, "imu/data_raw");
+    double gravity;
+    nh.param<double>("imu/gravity", gravity, 9.81);
     // Use global NodeHandle for topic publishing
     ros::NodeHandle nh_global;
     ros::Publisher imu_pub = nh_global.advertise<sensor_msgs::Imu>(topic, 10);
@@ -71,9 +73,9 @@ int main(int argc, char **argv)
                     imu_msg.header.stamp = ros::Time::now();
                     imu_msg.header.frame_id = frame_id;
 
-                    imu_msg.linear_acceleration.x = ax;
-                    imu_msg.linear_acceleration.y = ay;
-                    imu_msg.linear_acceleration.z = az;
+                    imu_msg.linear_acceleration.x = ax * gravity;
+                    imu_msg.linear_acceleration.y = ay * gravity;
+                    imu_msg.linear_acceleration.z = az * gravity;
 
                     imu_msg.angular_velocity.x = gx;
                     imu_msg.angular_velocity.y = gy;
