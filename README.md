@@ -12,7 +12,7 @@ timestamp ax ay az gx gy gz\n
 
 - Fields separated by spaces
 - `timestamp` — device timestamp
-- `ax ay az` — linear acceleration
+- `ax ay az` — linear acceleration (in g)
 - `gx gy gz` — angular velocity
 
 ## Dependencies
@@ -49,6 +49,7 @@ serial:
 imu:
   frame_id: "imu_link"
   topic: "imu/data_raw"
+  gravity: 9.81
 ```
 
 | Parameter | Description | Default |
@@ -58,6 +59,7 @@ imu:
 | `serial/timeout_ms` | Read timeout (ms) | `1000` |
 | `imu/frame_id` | TF frame ID | `imu_link` |
 | `imu/topic` | Published topic name | `imu/data_raw` |
+| `imu/gravity` | Gravity constant for converting acceleration from g to m/s² | `9.81` |
 
 ## Usage
 
