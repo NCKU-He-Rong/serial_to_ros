@@ -1,0 +1,11 @@
+serial:
+  port: "/dev/ttyUSB0"
+  baud_rate: 115200
+  timeout_ms: 1000
+
+gps:
+  frame_id: "gps_link"
+  topic: "gps/fix"
+
+slam:
+  odom_topic: "/Odometry"

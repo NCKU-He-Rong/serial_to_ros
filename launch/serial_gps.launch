@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="serial_to_ros" type="serial_gps_node" name="serial_gps_node" output="screen">
+    <rosparam file="$(find serial_to_ros)/config/serial_gps.yaml" command="load" />
+  </node>
+</launch>
