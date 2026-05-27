@@ -19,7 +19,7 @@ struct __attribute__((packed)) GPS_Data
 // Must match the Arduino-side SLAM_position struct layout exactly
 struct __attribute__((packed)) SLAM_position
 {
-    uint32_t timestamp;
+    uint64_t timestamp;
     float x;
     float y;
     float z;
@@ -36,7 +36,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
         return;
 
     SLAM_position slam;
-    slam.timestamp = static_cast<uint32_t>(msg->header.stamp.toNSec() / 1000); // 轉成微秒
+    slam.timestamp = static_cast<uint64_t>(msg->header.stamp.toNSec() / 1000); // 轉成微秒
     slam.x = static_cast<float>(msg->pose.pose.position.x);
     slam.y = static_cast<float>(msg->pose.pose.position.y);
     slam.z = static_cast<float>(msg->pose.pose.position.z);
@@ -44,8 +44,8 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
     g_ser->write(START_FRAME, 2);
     g_ser->write(reinterpret_cast<const uint8_t *>(&slam), sizeof(SLAM_position));
 
-    ROS_INFO("SLAM sent | ts=%u | x=%.3f y=%.3f z=%.3f",
-             slam.timestamp, slam.x, slam.y, slam.z);
+    ROS_INFO("SLAM sent | ts=%lu | x=%.3f y=%.3f z=%.3f",
+             (unsigned long)slam.timestamp, slam.x, slam.y, slam.z);
 }
 
 int main(int argc, char **argv)
