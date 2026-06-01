@@ -16,9 +16,8 @@ GPS_Data gpsData;
 struct __attribute__((packed)) SLAM_position
 {
   uint64_t timestamp = 1;                             // 時間戳 (微秒), Unix epoch 時間，從 1970-01-01 00:00:00 UTC 起算的微秒
-  float x = 2.0;                                      // SLAM x座標 （meter）
-  float y = 3.0;                                      // SLAM y座標 （meter）
-  float z = 4.0;                                      // SLAM z座標 （meter）
+  float pos[3] = {2.0, 3.0, 4.0};                     // 位置 (公尺), [x, y, z]
+  float orientation[4] = {0.0, 0.0, 0.0, 1.0};        // 姿態四元數 (無單位), [x, y, z, w]
 };
 SLAM_position slamPosition;
 
@@ -64,13 +63,22 @@ void SLAM_receive()
 
 void Serial_print()
 {
+  Serial.print("timestamp: ");
   Serial.print(slamPosition.timestamp);
+  Serial.print(" | pos_x: ");
+  Serial.print(slamPosition.pos[0], 3);
+  Serial.print(" | pos_y: ");
+  Serial.print(slamPosition.pos[1], 3);
+  Serial.print(" | pos_z: ");
+  Serial.print(slamPosition.pos[2], 3);
+  Serial.print(" | ori[x,y,z,w]: ");
+  Serial.print(slamPosition.orientation[0], 3);
   Serial.print(" ");
-  Serial.print(slamPosition.x, 3);
+  Serial.print(slamPosition.orientation[1], 3);
   Serial.print(" ");
-  Serial.print(slamPosition.y, 3);
+  Serial.print(slamPosition.orientation[2], 3);
   Serial.print(" ");
-  Serial.print(slamPosition.z, 3);
+  Serial.print(slamPosition.orientation[3], 3);
   Serial.println();
 }
 
@@ -92,7 +100,7 @@ void loop()
     Serial1.write((uint8_t *)&gpsData, sizeof(gpsData));
   }
   if (micros() - T_last2 >= 50000)
-  { // 10Hz
+  { // 20Hz
     T_last2 = micros();
     Serial_print();
   }

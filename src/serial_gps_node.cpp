@@ -20,9 +20,8 @@ struct __attribute__((packed)) GPS_Data
 struct __attribute__((packed)) SLAM_position
 {
     uint64_t timestamp;
-    float x;
-    float y;
-    float z;
+    float pos[3];
+    float orientation[4];
 };
 
 static const uint8_t START_FRAME[2] = {0xBB, 0xAA};
@@ -36,16 +35,22 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
         return;
 
     SLAM_position slam;
-    slam.timestamp = static_cast<uint64_t>(msg->header.stamp.toNSec() / 1000); // 轉成微秒
-    slam.x = static_cast<float>(msg->pose.pose.position.x);
-    slam.y = static_cast<float>(msg->pose.pose.position.y);
-    slam.z = static_cast<float>(msg->pose.pose.position.z);
+    slam.timestamp = static_cast<uint64_t>(ros::Time::now().toNSec() / 1000); // 用當下發送時間，轉成微秒
+    slam.pos[0] = static_cast<float>(msg->pose.pose.position.x);
+    slam.pos[1] = static_cast<float>(msg->pose.pose.position.y);
+    slam.pos[2] = static_cast<float>(msg->pose.pose.position.z);
+    slam.orientation[0] = static_cast<float>(msg->pose.pose.orientation.x);
+    slam.orientation[1] = static_cast<float>(msg->pose.pose.orientation.y);
+    slam.orientation[2] = static_cast<float>(msg->pose.pose.orientation.z);
+    slam.orientation[3] = static_cast<float>(msg->pose.pose.orientation.w);
 
     g_ser->write(START_FRAME, 2);
     g_ser->write(reinterpret_cast<const uint8_t *>(&slam), sizeof(SLAM_position));
 
-    ROS_INFO("SLAM sent | ts=%lu | x=%.3f y=%.3f z=%.3f",
-             (unsigned long)slam.timestamp, slam.x, slam.y, slam.z);
+    ROS_INFO("SLAM sent | ts=%lu | pos=[%.3f, %.3f, %.3f] | ori=[%.3f, %.3f, %.3f, %.3f]",
+             (unsigned long)slam.timestamp,
+             slam.pos[0], slam.pos[1], slam.pos[2],
+             slam.orientation[0], slam.orientation[1], slam.orientation[2], slam.orientation[3]);
 }
 
 int main(int argc, char **argv)

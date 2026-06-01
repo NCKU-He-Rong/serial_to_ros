@@ -1,0 +1,8 @@
+prefix=/home/lio/Desktop/utils_ws/src/serial_to_ros/build/devel
+
+Name: serial_to_ros
+Description: Description of serial_to_ros
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

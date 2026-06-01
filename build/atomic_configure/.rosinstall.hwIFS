@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/lio/Desktop/utils_ws/src/serial_to_ros/build/devel/setup.sh
